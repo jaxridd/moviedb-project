@@ -387,13 +387,33 @@ def create_app():
             with open(sql_file_path, 'r', encoding='utf-8') as f:
                 sql_content = f.read()
             
+            # Fix table name case issues (Movie -> movie, etc.)
+            sql_content = sql_content.replace('CREATE TABLE Movie', 'CREATE TABLE movie')
+            sql_content = sql_content.replace('CREATE TABLE Person', 'CREATE TABLE person')
+            sql_content = sql_content.replace('CREATE TABLE Role', 'CREATE TABLE role')
+            sql_content = sql_content.replace('CREATE TABLE Genre', 'CREATE TABLE genre')
+            sql_content = sql_content.replace('CREATE TABLE MovieGenre', 'CREATE TABLE moviegenre')
+            sql_content = sql_content.replace('CREATE TABLE MoviePerson', 'CREATE TABLE movieperson')
+            
+            # Also fix INSERT statements
+            sql_content = sql_content.replace('INSERT INTO Movie', 'INSERT INTO movie')
+            sql_content = sql_content.replace('INSERT INTO Person', 'INSERT INTO person')
+            sql_content = sql_content.replace('INSERT INTO Role', 'INSERT INTO role')
+            sql_content = sql_content.replace('INSERT INTO Genre', 'INSERT INTO genre')
+            sql_content = sql_content.replace('INSERT INTO MovieGenre', 'INSERT INTO moviegenre')
+            sql_content = sql_content.replace('INSERT INTO MoviePerson', 'INSERT INTO movieperson')
+            
             # Split SQL into individual statements
             statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
             
             # Execute each statement
             for statement in statements:
-                if statement:
-                    db.session.execute(db.text(statement))
+                if statement and not statement.startswith('--'):
+                    try:
+                        db.session.execute(db.text(statement))
+                    except Exception as stmt_error:
+                        print(f"Error executing statement: {statement[:100]}... Error: {stmt_error}")
+                        # Continue with other statements
             
             db.session.commit()
             
