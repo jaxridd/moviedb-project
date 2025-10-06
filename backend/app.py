@@ -376,6 +376,37 @@ def create_app():
         
         return jsonify(results)
 
+    # Import your SQL file endpoint
+    @app.route("/import-sql", methods=["POST"])
+    def import_sql():
+        try:
+            # Read your SQL file
+            import os
+            sql_file_path = os.path.join(os.path.dirname(__file__), 'Movie_database.sql')
+            
+            with open(sql_file_path, 'r', encoding='utf-8') as f:
+                sql_content = f.read()
+            
+            # Split SQL into individual statements
+            statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+            
+            # Execute each statement
+            for statement in statements:
+                if statement:
+                    db.session.execute(db.text(statement))
+            
+            db.session.commit()
+            
+            return jsonify({
+                "message": "Your SQL file imported successfully!",
+                "statements_executed": len(statements),
+                "file": "Movie_database.sql"
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+
     return app
 
 # Create app instance for gunicorn
