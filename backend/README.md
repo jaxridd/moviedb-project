@@ -1,97 +1,32 @@
-# Movie Database System - Backend API
+# Movie Database API
 
-A Flask REST API for managing a movie database with complete CRUD operations, search functionality, and relationship management.
+A production-ready Flask REST API for managing a movie database.
 
-## Quick Start
+## 🚀 Live API
 
-### 1. Install Dependencies
+**URL:** `https://moviedb-project-production-cd2f.up.railway.app`
 
-```bash
-pip install -r requirements.txt
-```
+## 📖 Documentation
 
-### 2. Set Up Database
+See [FRONTEND_GUIDE.md](./FRONTEND_GUIDE.md) for complete frontend integration guide.
 
-```bash
-# Set your MySQL connection
-export DATABASE_URL="mysql+pymysql://root:your_password@localhost/moviedb"
+## 🎯 Key Features
 
-# Make sure moviedb database exists in MySQL
-```
+- Complete CRUD operations for movies, genres, and people
+- Advanced search and filtering
+- Movie-cast relationships
+- Production-ready deployment
 
-### 3. Run the API
+## 🔧 For Developers
 
-```bash
-python app.py
-```
+- **Framework:** Flask + SQLAlchemy
+- **Database:** MySQL
+- **Deployment:** Railway
+- **CORS:** Enabled for frontend integration
 
-The API will be available at `http://localhost:5000`
-
-## API Endpoints
-
-### Movies
-
-- `GET /movies` - List movies with search, filtering, and pagination
-- `GET /movies/{id}` - Get movie details with cast and crew
-- `POST /movies` - Create new movie
-- `PUT /movies/{id}` - Update movie
-- `DELETE /movies/{id}` - Delete movie
-- `GET /movies/top-rated` - Get highest rated movies
-- `GET /movies/by-year/{year}` - Get movies by release year
-- `GET /movies/stats` - Get database statistics
-
-### Genres
-
-- `GET /genres` - List all genres
-- `GET /genres/{id}/movies` - Get movies by genre
-- `POST /genres` - Create genre
-- `PUT /genres/{id}` - Update genre
-- `DELETE /genres/{id}` - Delete genre
-
-### People
-
-- `GET /people` - List people with search
-- `GET /people/{id}` - Get person details with their movies
-- `POST /people` - Create person
-- `PUT /people/{id}` - Update person
-- `DELETE /people/{id}` - Delete person
-
-### Search
-
-- `GET /search?q=query` - Global search across movies, people, and genres
-
-### Health Check
-
-- `GET /health` - API status check
-
-## Example Usage
-
-### Get all movies
+## 📋 Quick Test
 
 ```bash
-curl http://localhost:5000/movies
-```
-
-### Search movies
-
-```bash
-curl "http://localhost:5000/movies?search=john&sort=rating&page=1&per_page=10"
-```
-
-### Get movie details
-
-```bash
-curl http://localhost:5000/movies/1
-```
-
-### Get top rated movies
-
-```bash
-curl "http://localhost:5000/movies/top-rated?limit=5"
-```
-
-### Global search
-
-```bash
-curl "http://localhost:5000/search?q=keanu"
+curl https://moviedb-project-production-cd2f.up.railway.app/health
+curl https://moviedb-project-production-cd2f.up.railway.app/movies
 ```
