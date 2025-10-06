@@ -56,9 +56,16 @@ def create_app():
 
     @app.route("/genres/<int:genre_id>/movies", methods=["GET"])
     def movies_by_genre(genre_id):
-        g = Genre.query.get_or_404(genre_id)
-        movies = [m.to_dict(include_relations=False) for m in g.movies]
-        return jsonify({"genre": g.genre_name, "movies": movies})
+        try:
+            g = Genre.query.get_or_404(genre_id)
+            movies = []
+            try:
+                movies = [m.to_dict(include_relations=False) for m in g.movies]
+            except:
+                movies = []
+            return jsonify({"genre": g.genre_name, "movies": movies})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     @app.route("/people", methods=["GET"])
     def list_people():
@@ -72,15 +79,26 @@ def create_app():
 
     @app.route("/people/<int:person_id>", methods=["GET"])
     def person_detail(person_id):
-        p = Person.query.get_or_404(person_id)
-        # list movies and roles
-        rows = MoviePerson.query.filter_by(person_id=person_id).all()
-        movies = []
-        for mp in rows:
-            movie = Movie.query.get(mp.movie_id)
-            role = Role.query.get(mp.role_id)
-            movies.append({"movie_id": movie.movie_id, "title": movie.title, "role": role.role_name})
-        return jsonify({"person_id": p.person_id, "name": p.full_name(), "movies": movies})
+        try:
+            p = Person.query.get_or_404(person_id)
+            # list movies and roles
+            movies = []
+            try:
+                rows = MoviePerson.query.filter_by(person_id=person_id).all()
+                for mp in rows:
+                    movie = Movie.query.get(mp.movie_id)
+                    role = Role.query.get(mp.role_id)
+                    if movie and role:
+                        movies.append({
+                            "movie_id": movie.movie_id, 
+                            "title": movie.title, 
+                            "role": role.role_name
+                        })
+            except:
+                movies = []
+            return jsonify({"person_id": p.person_id, "name": p.full_name(), "movies": movies})
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     @app.route("/roles", methods=["GET"])
     def list_roles():
