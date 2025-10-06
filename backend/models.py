@@ -35,13 +35,25 @@ class Movie(db.Model):
             rating=self.rating,
         )
         if include_relations:
-            d["genres"] = [g.genre_name for g in self.genres]
+            try:
+                d["genres"] = [g.genre_name for g in self.genres]
+            except:
+                d["genres"] = []
+            
             # include persons with roles
             persons = []
-            for mp in MoviePerson.query.filter_by(movie_id=self.movie_id).all():
-                person = Person.query.get(mp.person_id)
-                role = Role.query.get(mp.role_id)
-                persons.append({"person_id": person.person_id, "name": f"{person.first_name} {person.last_name}", "role": role.role_name})
+            try:
+                for mp in MoviePerson.query.filter_by(movie_id=self.movie_id).all():
+                    person = Person.query.get(mp.person_id)
+                    role = Role.query.get(mp.role_id)
+                    if person and role:
+                        persons.append({
+                            "person_id": person.person_id, 
+                            "name": f"{person.first_name} {person.last_name}", 
+                            "role": role.role_name
+                        })
+            except:
+                pass
             d["people"] = persons
         return d
 
