@@ -43,24 +43,24 @@ def export_database():
             result = subprocess.run(cmd, stdout=f, stderr=subprocess.PIPE, text=True)
         
         if result.returncode == 0:
-            print(f"✅ Database exported successfully to {filename}")
-            print(f"📁 File size: {os.path.getsize(filename)} bytes")
-            print(f"\n📋 Next steps:")
+            print(f"Database exported successfully to {filename}")
+            print(f"File size: {os.path.getsize(filename)} bytes")
+            print(f"\nNext steps:")
             print(f"1. Share {filename} with your team")
             print(f"2. Import to Railway MySQL database")
             print(f"3. Update DATABASE_URL in Railway environment variables")
         else:
-            print(f"❌ Export failed: {result.stderr}")
+            print(f"Export failed: {result.stderr}")
             
     except FileNotFoundError:
-        print("❌ mysqldump not found. Make sure MySQL is installed and in PATH")
+        print("mysqldump not found. Make sure MySQL is installed and in PATH")
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
 
 def show_import_instructions():
     """Show instructions for importing to Railway"""
     print("\n" + "="*50)
-    print("📖 IMPORT INSTRUCTIONS FOR RAILWAY")
+    print("IMPORT INSTRUCTIONS FOR RAILWAY")
     print("="*50)
     print("""
 1. Go to Railway dashboard → Your project
@@ -81,7 +81,7 @@ DATABASE_URL=mysql+pymysql://[user]:[password]@[host]:[port]/[database]
 """)
 
 if __name__ == "__main__":
-    print("🗄️  Movie Database Export Tool")
+    print("Movie Database Export Tool")
     print("="*40)
     
     # Check if we can connect to local MySQL
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             database='moviedb'
         )
         connection.close()
-        print("✅ Local MySQL connection successful")
+        print("Local MySQL connection successful")
         export_database()
         show_import_instructions()
     except Exception as e:
