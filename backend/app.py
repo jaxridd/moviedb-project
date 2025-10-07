@@ -438,33 +438,10 @@ def create_app():
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
-    # Import your actual SQL relationships
+    # Import your actual SQL relationships (just insert data)
     @app.route("/import-real-relationships", methods=["POST"])
     def import_real_relationships():
         try:
-            # Create relationship tables first
-            db.session.execute(db.text("""
-                CREATE TABLE IF NOT EXISTS moviegenre (
-                    movie_id INT NOT NULL,
-                    genre_id INT NOT NULL,
-                    PRIMARY KEY (movie_id, genre_id),
-                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
-                    FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
-                )
-            """))
-            
-            db.session.execute(db.text("""
-                CREATE TABLE IF NOT EXISTS movieperson (
-                    movie_id INT NOT NULL,
-                    person_id INT NOT NULL,
-                    role_id INT NOT NULL,
-                    PRIMARY KEY (movie_id, person_id, role_id),
-                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
-                    FOREIGN KEY (person_id) REFERENCES person(person_id),
-                    FOREIGN KEY (role_id) REFERENCES role(role_id)
-                )
-            """))
-            
             # Insert your actual movie-genre relationships from SQL file
             db.session.execute(db.text("""
                 INSERT IGNORE INTO moviegenre (movie_id, genre_id) VALUES
