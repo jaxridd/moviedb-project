@@ -438,6 +438,66 @@ def create_app():
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
+    # Import complete SQL file with relationships
+    @app.route("/import-complete-sql", methods=["POST"])
+    def import_complete_sql():
+        try:
+            # Read the SQL file
+            import os
+            sql_file_path = os.path.join(os.path.dirname(__file__), '..', 'Movie_database.sql')
+            
+            with open(sql_file_path, 'r', encoding='utf-8') as f:
+                sql_content = f.read()
+            
+            # Fix table name case issues (Movie -> movie, etc.)
+            sql_content = sql_content.replace('CREATE TABLE Movie', 'CREATE TABLE movie')
+            sql_content = sql_content.replace('CREATE TABLE Person', 'CREATE TABLE person')
+            sql_content = sql_content.replace('CREATE TABLE Role', 'CREATE TABLE role')
+            sql_content = sql_content.replace('CREATE TABLE Genre', 'CREATE TABLE genre')
+            sql_content = sql_content.replace('CREATE TABLE MovieGenre', 'CREATE TABLE moviegenre')
+            sql_content = sql_content.replace('CREATE TABLE MoviePerson', 'CREATE TABLE movieperson')
+            
+            # Fix INSERT statements
+            sql_content = sql_content.replace('INSERT INTO Movie', 'INSERT INTO movie')
+            sql_content = sql_content.replace('INSERT INTO Person', 'INSERT INTO person')
+            sql_content = sql_content.replace('INSERT INTO Role', 'INSERT INTO role')
+            sql_content = sql_content.replace('INSERT INTO Genre', 'INSERT INTO genre')
+            sql_content = sql_content.replace('INSERT INTO MovieGenre', 'INSERT INTO moviegenre')
+            sql_content = sql_content.replace('INSERT INTO MoviePerson', 'INSERT INTO movieperson')
+            
+            # Fix foreign key references
+            sql_content = sql_content.replace('REFERENCES Movie(', 'REFERENCES movie(')
+            sql_content = sql_content.replace('REFERENCES Person(', 'REFERENCES person(')
+            sql_content = sql_content.replace('REFERENCES Role(', 'REFERENCES role(')
+            sql_content = sql_content.replace('REFERENCES Genre(', 'REFERENCES genre(')
+            
+            # Split SQL into individual statements
+            statements = [stmt.strip() for stmt in sql_content.split(';') if stmt.strip()]
+            
+            # Execute each statement
+            executed_count = 0
+            for statement in statements:
+                if statement and not statement.startswith('--'):
+                    try:
+                        db.session.execute(db.text(statement))
+                        executed_count += 1
+                    except Exception as stmt_error:
+                        print(f"Error executing statement: {statement[:100]}... Error: {stmt_error}")
+                        # Continue with other statements
+            
+            db.session.commit()
+            
+            return jsonify({
+                "message": "Complete SQL file imported successfully!",
+                "statements_executed": executed_count,
+                "file": "Movie_database.sql",
+                "includes_relationships": True
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+
     return app
 
 # Create app instance for gunicorn
