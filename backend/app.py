@@ -446,14 +446,14 @@ def create_app():
             db.session.execute(db.text("DROP TABLE IF EXISTS movieperson"))
             db.session.execute(db.text("DROP TABLE IF EXISTS moviegenre"))
             
-            # Create relationship tables
+            # Create relationship tables with unique constraint names
             db.session.execute(db.text("""
                 CREATE TABLE moviegenre (
                     movie_id INT NOT NULL,
                     genre_id INT NOT NULL,
                     PRIMARY KEY (movie_id, genre_id),
-                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
-                    FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
+                    CONSTRAINT fk_moviegenre_movie FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+                    CONSTRAINT fk_moviegenre_genre FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
                 )
             """))
             
@@ -463,9 +463,9 @@ def create_app():
                     person_id INT NOT NULL,
                     role_id INT NOT NULL,
                     PRIMARY KEY (movie_id, person_id, role_id),
-                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
-                    FOREIGN KEY (person_id) REFERENCES person(person_id),
-                    FOREIGN KEY (role_id) REFERENCES role(role_id)
+                    CONSTRAINT fk_movieperson_movie FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+                    CONSTRAINT fk_movieperson_person FOREIGN KEY (person_id) REFERENCES person(person_id),
+                    CONSTRAINT fk_movieperson_role FOREIGN KEY (role_id) REFERENCES role(role_id)
                 )
             """))
             
