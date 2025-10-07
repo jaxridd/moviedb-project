@@ -438,13 +438,40 @@ def create_app():
             db.session.rollback()
             return jsonify({"error": str(e)}), 500
 
-    # Import your actual SQL relationships (just insert data)
-    @app.route("/import-real-relationships", methods=["POST"])
-    def import_real_relationships():
+    # Create relationship tables and import your actual SQL relationships
+    @app.route("/setup-real-relationships", methods=["POST"])
+    def setup_real_relationships():
         try:
+            # Drop and recreate relationship tables to ensure clean state
+            db.session.execute(db.text("DROP TABLE IF EXISTS movieperson"))
+            db.session.execute(db.text("DROP TABLE IF EXISTS moviegenre"))
+            
+            # Create relationship tables
+            db.session.execute(db.text("""
+                CREATE TABLE moviegenre (
+                    movie_id INT NOT NULL,
+                    genre_id INT NOT NULL,
+                    PRIMARY KEY (movie_id, genre_id),
+                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+                    FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
+                )
+            """))
+            
+            db.session.execute(db.text("""
+                CREATE TABLE movieperson (
+                    movie_id INT NOT NULL,
+                    person_id INT NOT NULL,
+                    role_id INT NOT NULL,
+                    PRIMARY KEY (movie_id, person_id, role_id),
+                    FOREIGN KEY (movie_id) REFERENCES movie(movie_id),
+                    FOREIGN KEY (person_id) REFERENCES person(person_id),
+                    FOREIGN KEY (role_id) REFERENCES role(role_id)
+                )
+            """))
+            
             # Insert your actual movie-genre relationships from SQL file
             db.session.execute(db.text("""
-                INSERT IGNORE INTO moviegenre (movie_id, genre_id) VALUES
+                INSERT INTO moviegenre (movie_id, genre_id) VALUES
                 (1, 1), (1, 4), (2, 2), (3, 1), (3, 5), (4, 5), (4, 8), 
                 (5, 1), (5, 4), (6, 3), (6, 6), (7, 1), (7, 3), (8, 3), 
                 (9, 3), (10, 3), (10, 1)
@@ -452,7 +479,7 @@ def create_app():
             
             # Insert your actual movie-person relationships from SQL file
             db.session.execute(db.text("""
-                INSERT IGNORE INTO movieperson (movie_id, person_id, role_id) VALUES
+                INSERT INTO movieperson (movie_id, person_id, role_id) VALUES
                 (1, 1, 1), (1, 11, 1), (1, 2, 2), (1, 21, 2),
                 (2, 3, 1), (2, 12, 1), (2, 4, 2),
                 (3, 5, 1), (3, 13, 1), (3, 14, 1), (3, 15, 2),
@@ -469,6 +496,7 @@ def create_app():
             
             return jsonify({
                 "message": "Your actual SQL relationships imported successfully!",
+                "tables_created": ["moviegenre", "movieperson"],
                 "movie_genre_relationships": 17,
                 "movie_person_relationships": 25,
                 "source": "From your Movie_database.sql file"
