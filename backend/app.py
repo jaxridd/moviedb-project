@@ -477,19 +477,14 @@ def create_app():
                 (9, 3), (10, 3), (10, 1)
             """))
             
-            # Insert your actual movie-person relationships from SQL file
+            # Insert movie-person relationships that work with existing data
             db.session.execute(db.text("""
                 INSERT INTO movieperson (movie_id, person_id, role_id) VALUES
-                (1, 1, 1), (1, 11, 1), (1, 2, 2), (1, 21, 2),
-                (2, 3, 1), (2, 12, 1), (2, 4, 2),
-                (3, 5, 1), (3, 13, 1), (3, 14, 1), (3, 15, 2),
-                (4, 16, 1), (4, 17, 1), (4, 18, 2),
-                (5, 7, 1), (5, 19, 1), (5, 20, 2),
-                (6, 8, 1), (6, 22, 1), (6, 23, 2),
-                (7, 8, 1), (7, 24, 1), (7, 25, 2),
-                (8, 26, 1), (8, 27, 2),
-                (9, 28, 1), (9, 29, 2),
-                (10, 30, 1), (10, 31, 2)
+                (1, 1, 1), (1, 2, 2),  -- John Wick: Keanu Reeves (Actor), Chad Stahelski (Director)
+                (2, 3, 1), (2, 4, 2),  -- Hangover 2: Bradley Cooper (Actor), Todd Phillips (Director)
+                (3, 5, 1),             -- Avengers: Robert Downey Jr (Actor)
+                (5, 7, 1),             -- Dark Knight: Christian Bale (Actor)
+                (6, 8, 1)              -- Forrest Gump: Tom Hanks (Actor)
             """))
             
             db.session.commit()
