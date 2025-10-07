@@ -398,13 +398,8 @@ def create_app():
     @app.route("/setup-relationships", methods=["POST"])
     def setup_relationships():
         try:
-            # Create all tables first (including relationship tables)
-            db.create_all()
-            
             # Add some movie-genre relationships
             from models import MovieGenre, MoviePerson
-            
-            # Don't clear existing relationships - just add new ones
             
             # Add movie-genre relationships
             relationships = [
