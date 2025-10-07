@@ -398,12 +398,18 @@ def create_app():
     @app.route("/setup-relationships", methods=["POST"])
     def setup_relationships():
         try:
+            # Create all tables first (including relationship tables)
+            db.create_all()
+            
             # Add some movie-genre relationships
             from models import MovieGenre, MoviePerson
             
-            # Clear existing relationships
-            MoviePerson.query.delete()
-            MovieGenre.query.delete()
+            # Clear existing relationships (if tables exist)
+            try:
+                MoviePerson.query.delete()
+                MovieGenre.query.delete()
+            except:
+                pass  # Tables might not exist yet
             
             # Add movie-genre relationships
             relationships = [
