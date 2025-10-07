@@ -404,12 +404,7 @@ def create_app():
             # Add some movie-genre relationships
             from models import MovieGenre, MoviePerson
             
-            # Clear existing relationships (if tables exist)
-            try:
-                MoviePerson.query.delete()
-                MovieGenre.query.delete()
-            except:
-                pass  # Tables might not exist yet
+            # Don't clear existing relationships - just add new ones
             
             # Add movie-genre relationships
             relationships = [
