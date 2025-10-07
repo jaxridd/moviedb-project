@@ -444,7 +444,7 @@ def create_app():
         try:
             # Read the SQL file
             import os
-            sql_file_path = os.path.join(os.path.dirname(__file__), '..', 'Movie_database.sql')
+            sql_file_path = os.path.join(os.path.dirname(__file__), 'Movie_database.sql')
             
             with open(sql_file_path, 'r', encoding='utf-8') as f:
                 sql_content = f.read()
