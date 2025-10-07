@@ -394,6 +394,53 @@ def create_app():
         
         return jsonify(results)
 
+    # Quick fix endpoint to add sample relationships (for demo purposes)
+    @app.route("/setup-relationships", methods=["POST"])
+    def setup_relationships():
+        try:
+            # Add some movie-genre relationships
+            from models import MovieGenre, MoviePerson
+            
+            # Clear existing relationships
+            MoviePerson.query.delete()
+            MovieGenre.query.delete()
+            
+            # Add movie-genre relationships
+            relationships = [
+                MovieGenre(movie_id=1, genre_id=1),  # John Wick - Action
+                MovieGenre(movie_id=3, genre_id=1),  # Avengers - Action
+                MovieGenre(movie_id=3, genre_id=8),  # Avengers - Adventure
+                MovieGenre(movie_id=5, genre_id=1),  # Dark Knight - Action
+                MovieGenre(movie_id=5, genre_id=3),  # Dark Knight - Drama
+                MovieGenre(movie_id=6, genre_id=3),  # Forrest Gump - Drama
+                MovieGenre(movie_id=6, genre_id=2),  # Forrest Gump - Comedy
+            ]
+            
+            for rel in relationships:
+                db.session.add(rel)
+            
+            # Add movie-person relationships
+            person_relationships = [
+                MoviePerson(movie_id=1, person_id=1, role_id=1),  # John Wick - Keanu - Actor
+                MoviePerson(movie_id=3, person_id=5, role_id=1),  # Avengers - Robert Downey Jr - Actor
+                MoviePerson(movie_id=5, person_id=7, role_id=1),  # Dark Knight - Christian Bale - Actor
+                MoviePerson(movie_id=6, person_id=8, role_id=1),  # Forrest Gump - Tom Hanks - Actor
+            ]
+            
+            for rel in person_relationships:
+                db.session.add(rel)
+            
+            db.session.commit()
+            
+            return jsonify({
+                "message": "Sample relationships added successfully!",
+                "movie_genres": len(relationships),
+                "movie_people": len(person_relationships)
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
 
     return app
 
