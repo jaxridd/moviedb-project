@@ -477,14 +477,29 @@ def create_app():
                 (9, 3), (10, 3), (10, 1)
             """))
             
-            # Insert movie-person relationships that work with existing data
+            # Insert ALL movie-person relationships from your SQL file
             db.session.execute(db.text("""
                 INSERT INTO movieperson (movie_id, person_id, role_id) VALUES
-                (1, 1, 1), (1, 2, 2),  -- John Wick: Keanu Reeves (Actor), Chad Stahelski (Director)
-                (2, 3, 1), (2, 4, 2),  -- Hangover 2: Bradley Cooper (Actor), Todd Phillips (Director)
-                (3, 5, 1),             -- Avengers: Robert Downey Jr (Actor)
-                (5, 7, 1),             -- Dark Knight: Christian Bale (Actor)
-                (6, 8, 1)              -- Forrest Gump: Tom Hanks (Actor)
+                -- John Wick
+                (1, 1, 1), (1, 11, 1), (1, 2, 2), (1, 21, 2),
+                -- Hangover 2
+                (2, 3, 1), (2, 12, 1), (2, 4, 2),
+                -- Avengers: Endgame
+                (3, 5, 1), (3, 13, 1), (3, 14, 1), (3, 6, 2), (3, 24, 2),
+                -- Interstellar
+                (4, 15, 1), (4, 25, 2),
+                -- Dark Knight
+                (5, 16, 1), (5, 26, 2),
+                -- Forrest Gump
+                (6, 7, 1), (6, 28, 2),
+                -- Saving Private Ryan
+                (7, 17, 1), (7, 8, 2),
+                -- The Pianist
+                (8, 9, 1), (8, 18, 1), (8, 27, 2),
+                -- Whiplash
+                (9, 10, 1), (9, 19, 1),
+                -- Scarface
+                (10, 20, 1)
             """))
             
             db.session.commit()
@@ -494,7 +509,8 @@ def create_app():
                 "tables_created": ["moviegenre", "movieperson"],
                 "movie_genre_relationships": 17,
                 "movie_person_relationships": 25,
-                "source": "From your Movie_database.sql file"
+                "source": "From your Movie_database.sql file",
+                "all_relationships": "Complete movie-genre and movie-person relationships from your SQL file"
             })
             
         except Exception as e:
